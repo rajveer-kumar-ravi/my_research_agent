@@ -1,0 +1,52 @@
+# ==========================================================
+# Build context is the repository root (see docker-compose.yml).
+# Keep the image lean and NEVER bake secrets into it.
+# ==========================================================
+
+# Version control
+.git
+.gitignore
+
+# Python
+**/__pycache__/
+**/*.py[cod]
+**/*.egg-info/
+.venv/
+venv/
+backend/.venv/
+backend/venv/
+.pytest_cache/
+**/.pytest_cache/
+backend/pytest.ini
+
+# --- Secrets: never copied into the image. Real values are injected at
+# container RUNTIME via docker-compose's `env_file: .env`, not baked in. ---
+.env
+.env.*
+!.env.example
+
+# Databases (dev artifacts — production data lives in the named volume)
+*.db
+*.sqlite3
+backend/research_agent.db
+
+# Tests (not needed at runtime, keeps the image smaller)
+backend/tests/
+
+# Frontend dev/test tooling artifacts, if present
+**/node_modules/
+frontend/verify_frontend.js
+frontend/package.json
+frontend/package-lock.json
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Docs / eval assets not needed inside the running image
+README.md
+eval/

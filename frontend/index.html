@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Research Agent — New Research</title>
+  <meta name="description" content="AI-powered web research and evidence synthesis." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <!-- Mobile top bar (shown under 860px) -->
+    <header class="mobile-topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">WR</span>
+        <div class="brand-text">
+          <strong>Web Research Agent</strong>
+        </div>
+      </div>
+      <nav class="mobile-tabs" aria-label="Primary">
+        <a class="nav-link is-active" href="index.html">Research</a>
+        <a class="nav-link" href="history.html">History</a>
+      </nav>
+    </header>
+
+    <!-- Sidebar (desktop/tablet) -->
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">WR</span>
+        <div class="brand-text">
+          <strong>Web Research Agent</strong>
+          <span>EVIDENCE SYNTHESIS</span>
+        </div>
+      </div>
+
+      <nav aria-label="Primary">
+        <ul class="nav-list">
+          <li>
+            <a class="nav-link is-active" href="index.html" aria-current="page">
+              <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="6"/><path d="M17 17l-4-4" stroke-linecap="round"/></svg>
+              New Research
+            </a>
+          </li>
+          <li>
+            <a class="nav-link" href="history.html">
+              <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 5v5l3.5 2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="10" r="7.25"/></svg>
+              History
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div id="apiStatusLine">
+          <span class="status-dot" id="apiStatusDot" style="background: var(--color-text-muted);"></span>
+          <span id="apiStatusText">Checking API…</span>
+        </div>
+        <div class="user-chip">
+          <span class="user-email" id="userEmail"></span>
+          <button type="button" class="logout-link" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main content -->
+    <main class="main">
+      <div class="content">
+
+        <div class="page-header">
+          <h1>New research</h1>
+          <p class="subtitle">Ask a complex question. The agent decomposes it, searches the web, verifies evidence, and synthesizes a cited report.</p>
+        </div>
+
+        <!-- Error banner -->
+        <div class="error-banner" id="errorBanner" role="alert">
+          <svg class="icon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7.5"/><path d="M10 6.5v4" stroke-linecap="round"/><circle cx="10" cy="13.2" r="0.6" fill="currentColor" stroke="none"/></svg>
+          <div>
+            <strong>Research failed</strong>
+            <p id="errorMessage">Something went wrong.</p>
+          </div>
+        </div>
+
+        <!-- New research form -->
+        <section class="card" id="researchFormCard">
+          <form class="research-form" id="researchForm" novalidate>
+            <label for="queryInput">Research question</label>
+            <textarea
+              id="queryInput"
+              class="research-textarea"
+              placeholder="e.g. Compare the latest RAG evaluation methods, their advantages and disadvantages, and recommend which approach is most suitable for production."
+              minlength="8"
+              maxlength="2000"
+              required
+            ></textarea>
+            <div class="field-hint">
+              <span id="charCount">0 / 2000</span>
+              <span id="validationHint"></span>
+            </div>
+
+            <div class="form-footer">
+              <div class="examples" id="exampleChips" aria-label="Example questions">
+                <!-- populated by app.js -->
+              </div>
+              <button type="submit" class="btn btn-primary" id="submitBtn">
+                <span id="submitBtnText">Start research</span>
+              </button>
+            </div>
+          </form>
+        </section>
+
+        <!-- Evidence Trail (live progress) -->
+        <section class="card evidence-trail" id="evidenceTrail" aria-live="polite">
+          <div class="card-header">
+            <div>
+              <div class="card-eyebrow">Live progress</div>
+              <h2 id="trailQueryTitle">Research in progress</h2>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="newResearchBtn">New research</button>
+          </div>
+
+          <div class="trail-status-line">
+            <div class="spinner on-dark" id="trailSpinner"></div>
+            <span class="label">Status: <strong id="trailStatusText">pending</strong></span>
+          </div>
+
+          <div class="trail-log" id="trailLog">
+            <!-- progress entries populated by app.js -->
+          </div>
+        </section>
+
+        <!-- Final report -->
+        <section class="report" id="reportSection">
+
+          <div class="report-stats">
+            <div class="stat-tile">
+              <div class="stat-value" id="statSources">—</div>
+              <div class="stat-label">Sources</div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-value" id="statClaims">—</div>
+              <div class="stat-label">Cited claims</div>
+            </div>
+            <div class="stat-tile">
+              <div class="stat-value" id="statConflicts">—</div>
+              <div class="stat-label">Conflicts flagged</div>
+            </div>
+          </div>
+
+          <div class="insufficient-note" id="insufficientNote" style="display: none;">
+            <strong>Insufficient evidence</strong>
+            <span id="insufficientText"></span>
+          </div>
+
+          <section class="card" id="summaryCard">
+            <div class="card-header"><h2>Executive summary</h2></div>
+            <p class="analysis-body" id="executiveSummary"></p>
+          </section>
+
+          <section class="card" id="findingsCard">
+            <div class="card-header"><h2>Key findings</h2></div>
+            <ul class="findings-list" id="findingsList"></ul>
+          </section>
+
+          <section class="card" id="analysisCard">
+            <div class="card-header"><h2>Detailed analysis</h2></div>
+            <p class="analysis-body" id="detailedAnalysis"></p>
+          </section>
+
+          <section class="card" id="comparisonCard" style="display: none;">
+            <div class="card-header"><h2>Comparison</h2></div>
+            <div class="comparison-table-wrap">
+              <table class="comparison-table" id="comparisonTable">
+                <thead>
+                  <tr>
+                    <th>Method</th>
+                    <th>Advantages</th>
+                    <th>Disadvantages</th>
+                    <th>Best use case</th>
+                  </tr>
+                </thead>
+                <tbody id="comparisonTableBody"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="card" id="conflictsCard" style="display: none;">
+            <div class="card-header"><h2>Conflicting information</h2></div>
+            <div id="conflictsList"></div>
+          </section>
+
+          <section class="card" id="claimsCard">
+            <div class="card-header"><h2>Claims &amp; evidence</h2></div>
+            <div class="claims-list" id="claimsList"></div>
+          </section>
+
+          <section class="card" id="sourcesCard">
+            <div class="card-header"><h2>Sources</h2></div>
+            <div class="sources-grid" id="sourcesGrid"></div>
+          </section>
+
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/app.js"></script>
+</body>
+</html>

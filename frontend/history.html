@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Web Research Agent — History</title>
+  <meta name="description" content="Past research runs, their status, and reports." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,500;8..60,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+  <div class="app-shell">
+
+    <header class="mobile-topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">WR</span>
+        <div class="brand-text">
+          <strong>Web Research Agent</strong>
+        </div>
+      </div>
+      <nav class="mobile-tabs" aria-label="Primary">
+        <a class="nav-link" href="index.html">Research</a>
+        <a class="nav-link is-active" href="history.html">History</a>
+      </nav>
+    </header>
+
+    <aside class="sidebar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">WR</span>
+        <div class="brand-text">
+          <strong>Web Research Agent</strong>
+          <span>EVIDENCE SYNTHESIS</span>
+        </div>
+      </div>
+
+      <nav aria-label="Primary">
+        <ul class="nav-list">
+          <li>
+            <a class="nav-link" href="index.html">
+              <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="9" cy="9" r="6"/><path d="M17 17l-4-4" stroke-linecap="round"/></svg>
+              New Research
+            </a>
+          </li>
+          <li>
+            <a class="nav-link is-active" href="history.html" aria-current="page">
+              <svg class="nav-icon" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M10 5v5l3.5 2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="10" cy="10" r="7.25"/></svg>
+              History
+            </a>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div id="apiStatusLine">
+          <span class="status-dot" id="apiStatusDot" style="background: var(--color-text-muted);"></span>
+          <span id="apiStatusText">Checking API…</span>
+        </div>
+        <div class="user-chip">
+          <span class="user-email" id="userEmail"></span>
+          <button type="button" class="logout-link" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <div class="content">
+
+        <div class="page-header">
+          <h1>Research history</h1>
+          <p class="subtitle">Every research run this server has processed, with its evidence and status.</p>
+        </div>
+
+        <div class="error-banner" id="errorBanner" role="alert">
+          <svg class="icon" width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.7"><circle cx="10" cy="10" r="7.5"/><path d="M10 6.5v4" stroke-linecap="round"/><circle cx="10" cy="13.2" r="0.6" fill="currentColor" stroke="none"/></svg>
+          <div>
+            <strong>Couldn't load history</strong>
+            <p id="errorMessage">Something went wrong.</p>
+          </div>
+        </div>
+
+        <div class="loading-state" id="loadingState">
+          <div class="spinner on-dark" style="width: 22px; height: 22px; margin-bottom: 12px;"></div>
+          <span>Loading history…</span>
+        </div>
+
+        <div class="empty-state" id="emptyState" style="display: none;">
+          <h3>No research yet</h3>
+          <p>Start your first research question and it will show up here once it's underway.</p>
+          <a href="index.html" class="btn btn-primary" style="margin-top: 16px;">Start research</a>
+        </div>
+
+        <div class="history-list" id="historyList" aria-live="polite"></div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="js/history.js"></script>
+</body>
+</html>

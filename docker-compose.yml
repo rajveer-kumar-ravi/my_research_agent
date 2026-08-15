@@ -1,0 +1,90 @@
+# Intelligent Web Research Agent — Docker Compose
+#
+# Single service by design: app/main.py already serves the vanilla-JS
+# frontend from the same FastAPI process the backend runs in (see
+# backend/Dockerfile), so there is no separate frontend container or
+# reverse proxy to configure — one command, one port, real same-origin
+# requests (no CORS involved at all in this deployment mode).
+#
+# Usage:
+#   cp .env.example .env      # then fill in your real API keys
+#   docker compose up --build --scale app=5
+#   -> http://localhost:8000
+
+services:
+  app:
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    image: web-research-agent:latest
+    # DHYAN DEIN: Yahan se 'container_name' hata diya hai taki hum isko scale kar sakein
+    # DHYAN DEIN: 'ports' ki jagah 'expose' use kiya hai taki 8000 port multiple containers me clash na kare
+    expose:
+      - "8000"
+    env_file:
+      - .env
+    environment:
+      # Always point at the persistent named volume below, regardless of
+      # whatever DATABASE_URL is set to in .env — this guarantees research
+      # history survives container restarts/recreation with zero extra
+      # setup. (Compose's `environment:` takes precedence over `env_file:`
+      # for the same key.)
+      DATABASE_URL: sqlite:////data/research_agent.db
+      # Added Redis URL for caching and rate limiting
+      REDIS_URL: redis://redis:6379/0
+    volumes:
+      - research_data:/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
+    restart: unless-stopped
+    depends_on:
+      - redis
+
+  # Redis Service (Kept as is)
+  redis:
+    image: redis:alpine
+    container_name: web-research-redis
+    ports:
+      - "6379:6379"
+    # NAYA: Memory limit aur Eviction Policy yahan define hogi
+    command: redis-server --maxmemory 256mb --maxmemory-policy allkeys-lru
+    restart: unless-stopped
+
+  # Nginx Load Balancer
+  nginx:
+    image: nginx:latest
+    ports:
+      - "8000:80" # Bahar se user 8000 par aayega, Nginx use internally manage karega
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+
+  # --- NAYA: Prometheus Data Collector ---
+  prometheus:
+    image: prom/prometheus:latest
+    ports:
+      - "9090:9090" # Prometheus ka dashboard 9090 port par khulega
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+    depends_on:
+      - app
+
+  # --- NAYA: Grafana Dashboard ---
+  grafana:
+    image: grafana/grafana:latest
+    ports:
+      - "3000:3000" # Grafana ka UI 3000 port par khulega
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin # Default password 'admin' set kar rahe hain
+    depends_on:
+      - prometheus
+
+volumes:
+  # Named volume so SQLite data persists independently of the container's
+  # lifecycle (survives `docker compose down` as long as `-v` isn't passed).
+  research_data:

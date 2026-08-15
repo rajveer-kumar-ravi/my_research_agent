@@ -1,0 +1,10 @@
+global:
+  scrape_interval: 5s # Har 5 second mein data collect karega
+
+scrape_configs:
+  - job_name: 'fastapi_backend'
+    # Kyunki humne scale=5 kiya hai, dns_sd_configs se ye 5 containers ko khud dhoondh lega
+    dns_sd_configs:
+      - names: ['app']
+        type: 'A'
+        port: 8000

@@ -1,0 +1,31 @@
+# Env / secrets
+.env
+*.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.pytest_cache/
+
+# Database
+*.db
+*.sqlite3
+
+# FAISS indices / cached embeddings
+backend/app/data/
+*.faiss
+*.index
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Node (none used, but ignore if present)
+node_modules/
