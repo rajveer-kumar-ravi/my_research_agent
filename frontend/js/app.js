@@ -10,14 +10,8 @@
   "use strict";
 
   // --- Single source of truth for the API base URL. -----------------------
-  // If this page is being served BY the FastAPI backend itself (the Docker
-  // setup does this), same-origin relative calls just work. If the frontend
-  // is instead served separately (e.g. `python -m http.server` on another
-  // port during local development), fall back to the default local API port.
-  const API_BASE =
-    window.location.port === "8000"
-      ? `${window.location.origin}/api`
-      : "http://localhost:8000/api";
+  // FIX: Changed to "/api" so it automatically uses the live Railway URL!
+  const API_BASE = "/api";
 
   const POLL_INTERVAL_MS = 1800;
   const MAX_POLL_NETWORK_RETRIES = 5;

@@ -9,10 +9,8 @@
 (function () {
   "use strict";
 
-  const API_BASE =
-    window.location.port === "8000"
-      ? `${window.location.origin}/api`
-      : "http://localhost:8000/api";
+  // FIX: Changed to "/api" so it automatically uses the live Railway URL!
+  const API_BASE = "/api";
 
   const els = {
     authError: document.getElementById("authError"),
