@@ -17,21 +17,18 @@ The agent runs a bounded, multi-step research loop, backed by a robust repositor
 4. **Embed & retrieve** — chunks are embedded (Sentence-Transformers) and semantically ranked (FAISS) against the original question, blended with a transparent source-quality heuristic and recency.
 5. **Decide** — the agent evaluates whether the evidence is actually sufficient. If not (and budget remains), it loops back with a refined query. This is a real decision point, not a fixed number of steps.
 6. **Synthesize & validate** — Gemini synthesizes a report (summary, findings, comparison table, claims, conflicts) from the retrieved evidence only; a deterministic citation-validation step then strips any citation that doesn't point to evidence the agent actually retrieved. **The system never lets an LLM invent a source.**
-
----
-
 ## 2. Architecture
 ```mermaid
 flowchart TD
-    U[User Query] --> A[analyze_and_plan<br/>Gemini: decompose + plan]
-    A --> S[search<br/>+ source selection]
-    S --> SC[scrape_and_chunk]
-    SC --> R[retrieve_and_rank<br/>FAISS + quality/recency]
-    R --> E{evaluate_evidence<br/>AGENTIC DECISION}
+    U["User Query"] --> A["analyze_and_plan<br/>Gemini: decompose + plan"]
+    A --> S["search<br/>+ source selection"]
+    S --> SC["scrape_and_chunk"]
+    SC --> R["retrieve_and_rank<br/>FAISS + quality/recency"]
+    R --> E["evaluate_evidence<br/>AGENTIC DECISION"]
     E -- search_more --> S
-    E -- synthesize --> SY[synthesize<br/>Gemini: findings, claims, conflicts]
-    E -- insufficient --> F[finalize]
-    SY --> CV[validate_citations<br/>never trusts a fabricated URL]
+    E -- synthesize --> SY["synthesize<br/>Gemini: findings, claims, conflicts"]
+    E -- insufficient --> F["finalize"]
+    SY --> CV["validate_citations<br/>never trusts a fabricated URL"]
     CV --> F
     F --> DONE[Final Research Report]
 
