@@ -38,6 +38,9 @@ flowchart TD
     R -.error.-> HF
     SY -.error.-> HF
     HF --> DONE
+```
+
+Layering: api/ (FastAPI routes, thin) --> ...
 
 Layering: api/ (FastAPI routes, thin) → services/research_service.py (the only bridge to the agent) → agent/graph.py + agent/nodes.py (LangGraph orchestration) → db/ (SQLAlchemy engine, session factories, zero-downtime runtime schema patching via _ensure_columns_exist, and ResearchRepository pattern) → services/*.py (search, scraper, embedding, retrieval, source-quality, citation, Gemini) → core/ & utils/ (Pydantic settings, scoped logging, SSRF guards, and validators).
 
